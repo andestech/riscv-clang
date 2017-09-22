@@ -31,20 +31,20 @@ const char *riscv::getRISCVTargetCPU(const ArgList &Args,
     MArch = Triple.getArchName();
   }
 
-  if (MArch.startswith("riscv32ema"))
-    return "rv32ema";
   if (MArch.startswith("riscv32emac"))
     return "rv32emac";
-  if (MArch.startswith("riscv32ima"))
-    return "rv32ima";
-  if (MArch.startswith("riscv32imac"))
-    return "rv32imac";
+  if (MArch.startswith("riscv32ema"))
+    return "rv32ema";
   if (MArch.startswith("riscv32imafd"))
     return "rv32imafd";
-  if (MArch.startswith("riscv64ima"))
-    return "rv64ima";
+  if (MArch.startswith("riscv32imac"))
+    return "rv32imac";
+  if (MArch.startswith("riscv32ima"))
+    return "rv32ima";
   if (MArch.startswith("riscv64imac"))
     return "rv64imac";
+  if (MArch.startswith("riscv64ima"))
+    return "rv64ima";
 
   bool Is64Bit = Triple.getArch() == llvm::Triple::riscv64;
 
