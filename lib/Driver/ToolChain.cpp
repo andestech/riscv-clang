@@ -10,6 +10,7 @@
 #include "clang/Driver/ToolChain.h"
 #include "ToolChains/CommonArgs.h"
 #include "ToolChains/Arch/ARM.h"
+#include "ToolChains/Arch/RISCV.h"
 #include "ToolChains/Clang.h"
 #include "clang/Basic/ObjCRuntime.h"
 #include "clang/Basic/VirtualFileSystem.h"
@@ -529,6 +530,22 @@ std::string ToolChain::ComputeLLVMTriple(const ArgList &Args,
     }
     Triple.setArchName(ArchName + Suffix.str());
 
+    return Triple.getTriple();
+  }
+  case llvm::Triple::riscv32:
+  case llvm::Triple::riscv64: {
+    llvm::Triple Triple = getTriple();
+
+    StringRef MCPU, MArch;
+    if (const Arg *A = Args.getLastArg(options::OPT_mcpu_EQ))
+      MCPU = A->getValue();
+    if (const Arg *A = Args.getLastArg(options::OPT_march_EQ))
+      MArch = A->getValue();
+
+    StringRef Arch =
+      tools::riscv::getLLVMArchForRISCV(MCPU, MArch, Triple);
+
+    Triple.setArchName(Arch.str());
     return Triple.getTriple();
   }
   }

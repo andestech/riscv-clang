@@ -137,3 +137,46 @@ void riscv::getRISCVTargetFeatures(const Driver &D, const ArgList &Args,
   if (hasE && (hasF || hasD))
     D.Diag(diag::err_drv_invalid_arch_name) << MArch;
 }
+
+StringRef riscv::getLLVMArchForRISCV(llvm::StringRef CPU, llvm::StringRef Arch,
+                                     const llvm::Triple &Triple)
+{
+  if (CPU.empty() && Arch.empty())
+    return Triple.getArchName();
+  // Arch order: -march > -mcpu > triple
+  StringRef Ext;
+  bool Is64Bit = false;
+
+  if (!Arch.empty()) {
+    Ext = Arch.substr(4);
+    Is64Bit = Arch.startswith("rv64");
+  } else if (!CPU.empty()) {
+    if (CPU.startswith("rv32")) {
+      Ext = CPU.substr(4);
+    } else if (CPU.startswith("rv64")) {
+      Is64Bit = CPU.startswith("rv64");
+      Ext = CPU.substr(4);
+    } else {
+      if (CPU == "generic-rv64") {
+        Is64Bit = true;
+      } else if (CPU == "generic-rv32") {
+        Is64Bit = false;
+      } else {
+        // Unknown CPU, just get info from triple
+        Ext = Triple.getArchName().substr(7);
+        Is64Bit = Triple.isArch64Bit();
+      }
+    }
+  } else {
+    Ext = Triple.getArchName().substr(7);
+    Is64Bit = Triple.isArch64Bit();
+  }
+
+  // Arch has I base ISA at least.
+  if (Ext.empty())
+    Ext = "i";
+
+  std::string BaseArch = Is64Bit ? "riscv64" : "riscv32";
+
+  return BaseArch + Ext.str();
+}

@@ -28,6 +28,9 @@ void getRISCVTargetFeatures(const Driver &D, const llvm::opt::ArgList &Args,
 const char *getRISCVTargetCPU(const llvm::opt::ArgList &Args,
                               const llvm::Triple &Triple);
 
+StringRef getLLVMArchForRISCV(llvm::StringRef CPU, llvm::StringRef Arch,
+                              const llvm::Triple &Triple);
+
 } // end namespace riscv
 } // end namespace target
 } // end namespace driver
