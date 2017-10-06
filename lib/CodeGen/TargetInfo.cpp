@@ -6538,18 +6538,23 @@ ABIArgInfo SystemZABIInfo::classifyArgumentType(QualType Ty) const {
 
 namespace {
 class RISCVABIInfo : public ABIInfo {
-  bool IsRV32, IsRV32E;
+  bool IsRV32, IsRV32E, HasD;
   unsigned MinABIStackAlignInBytes, StackAlignInBytes;
 public:
   RISCVABIInfo(CodeGenTypes &CGT, bool _IsRV32) :
     ABIInfo(CGT), IsRV32(_IsRV32), MinABIStackAlignInBytes(IsRV32 ? 4 : 8) {
     const llvm::Triple &Triple = getTarget().getTriple();
-    if(Triple.getArchName().startswith("riscv32e")) {
+    if (Triple.getArchName().startswith("riscv32e")) {
       StackAlignInBytes = 4;
       IsRV32E = true;
     } else {
       StackAlignInBytes = 16;
       IsRV32E = false;
+    }
+    if (Triple.getArchName().endswith("d")) {
+      HasD = true;
+    } else {
+      HasD = false;
     }
   }
 
@@ -6761,6 +6766,9 @@ ABIArgInfo RISCVABIInfo::classifyReturnType(QualType RetTy) const {
 
   uint64_t Size = getContext().getTypeSize(RetTy);
   uint64_t ReturnSize = IsRV32 ? 64 : 128;
+
+  if (HasD && RetTy->isFloatingType() && (Size > 64))
+    ReturnSize = 128;
 
   if (Size == 0)
     return ABIArgInfo::getIgnore();
