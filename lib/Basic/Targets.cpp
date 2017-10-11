@@ -8069,6 +8069,7 @@ public:
       .Case("rv64ima",  true)
       .Case("rv64imac", true)
       .Case("rv32imafd",true)
+      .Case("rv64imafd",true)
       .Default(false);
 
     return CPUKnown;

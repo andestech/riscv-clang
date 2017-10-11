@@ -41,6 +41,8 @@ const char *riscv::getRISCVTargetCPU(const ArgList &Args,
     return "rv32imac";
   if (MArch.startswith("riscv32ima"))
     return "rv32ima";
+  if (MArch.startswith("riscv64imafd"))
+    return "rv64imafd";
   if (MArch.startswith("riscv64imac"))
     return "rv64imac";
   if (MArch.startswith("riscv64ima"))
