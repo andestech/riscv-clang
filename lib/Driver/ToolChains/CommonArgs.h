@@ -84,9 +84,6 @@ void AddTargetFeature(const llvm::opt::ArgList &Args,
                       llvm::opt::OptSpecifier OnOpt,
                       llvm::opt::OptSpecifier OffOpt, StringRef FeatureName);
 
-std::string getArchName(const llvm::opt::ArgList &Args, const llvm::Triple &T,
-                        bool FromAs = false);
-
 std::string getCPUName(const llvm::opt::ArgList &Args, const llvm::Triple &T,
                        bool FromAs = false);
 

@@ -257,26 +257,6 @@ static StringRef getWebAssemblyTargetCPU(const ArgList &Args) {
   return "generic";
 }
 
-std::string tools::getArchName(const ArgList &Args, const llvm::Triple &T,
-                               bool FromAs) {
-  Arg *A;
-
-  switch (T.getArch()) {
-  default:
-    return "";
-
-  case llvm::Triple::riscv32:
-  case llvm::Triple::riscv64: {
-    StringRef MArch;
-    if ((A = Args.getLastArg(options::OPT_march_EQ))) {
-      MArch = A->getValue();
-      return MArch.str();
-    } else
-      return "";
-  }
-  }
-}
-
 std::string tools::getCPUName(const ArgList &Args, const llvm::Triple &T,
                               bool FromAs) {
   Arg *A;
@@ -412,10 +392,6 @@ void tools::AddGoldPlugin(const ToolChain &ToolChain, const ArgList &Args,
   std::string CPU = getCPUName(Args, ToolChain.getTriple());
   if (!CPU.empty())
     CmdArgs.push_back(Args.MakeArgString(Twine("-plugin-opt=mcpu=") + CPU));
-
-  std::string Arch = getArchName(Args, ToolChain.getTriple());
-  if (!Arch.empty())
-    CmdArgs.push_back(Args.MakeArgString(Twine("-plugin-opt=-march=") + CPU));
 
   if (Arg *A = Args.getLastArg(options::OPT_O_Group)) {
     StringRef OOpt;
