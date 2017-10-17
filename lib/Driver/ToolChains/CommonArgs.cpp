@@ -415,7 +415,7 @@ void tools::AddGoldPlugin(const ToolChain &ToolChain, const ArgList &Args,
 
   std::string Arch = getArchName(Args, ToolChain.getTriple());
   if (!Arch.empty())
-    CmdArgs.push_back(Args.MakeArgString(Twine("-plugin-opt=-march=") + Arch));
+    CmdArgs.push_back(Args.MakeArgString(Twine("-plugin-opt=-march=") + CPU));
 
   if (Arg *A = Args.getLastArg(options::OPT_O_Group)) {
     StringRef OOpt;
